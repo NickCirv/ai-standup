@@ -1,0 +1,34 @@
+{
+  "name": "ai-standup",
+  "version": "1.0.0",
+  "description": "AI generates your standup from all your tools — git, todos, calendar — no API needed",
+  "type": "module",
+  "bin": {
+    "ai-standup": "./bin/standup.js"
+  },
+  "scripts": {
+    "start": "node bin/standup.js",
+    "dev": "node --watch bin/standup.js",
+    "link": "npm link"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "commander": "^12.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "standup",
+    "cli",
+    "git",
+    "productivity",
+    "developer-tools"
+  ],
+  "author": "NickCirv <nick@cirvgreen.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NickCirv/ai-standup.git"
+  }
+}
