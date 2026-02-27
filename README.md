@@ -1,46 +1,41 @@
-<div align="center">
-  <img src="banner.svg" alt="ai-standup" width="600" />
-  <p><strong>Auto-generate your daily standup from local git signals — no AI API needed.</strong></p>
-  <p>
-    <a href="https://www.npmjs.com/package/ai-standup"><img alt="npm" src="https://img.shields.io/npm/v/ai-standup?color=3B82F6"></a>
-    <a href="LICENSE"><img alt="MIT" src="https://img.shields.io/badge/license-MIT-3B82F6"></a>
-    <img alt="Node" src="https://img.shields.io/badge/node-%3E%3D18-3B82F6">
-  </p>
-</div>
+<p align="center">
+  <img src="banner.svg" width="600" />
+</p>
+
+<h1 align="center">ai-standup</h1>
+<p align="center"><strong>Your standup, written for you. From your actual work.</strong></p>
+
+<p align="center">
+  <a href="#install"><img src="https://img.shields.io/badge/npx-ai--standup-blue?style=flat-square" alt="npx" /></a>
+  <img src="https://img.shields.io/badge/no%20AI%20API-local%20only-green?style=flat-square" alt="no AI API" />
+  <img src="https://img.shields.io/badge/multi--repo-%E2%9C%93-brightgreen?style=flat-square" alt="multi-repo" />
+  <img src="https://img.shields.io/github/license/NickCirv/ai-standup?style=flat-square" alt="license" />
+</p>
+
+<p align="center">
+  <em>Reads your git log, staged changes, TODOs, and branches. Generates Yesterday / Today / Blockers in seconds.</em>
+</p>
+
+---
+
+It's 9:01am. Standup starts in 4 minutes. You're frantically scrolling through your git log trying to remember what you did yesterday. "I think I fixed that... thing?"
+
+**ai-standup reads your git history and tells you exactly what you did, what you're doing, and what's blocking you.** No AI API needed — it's all local.
 
 ---
 
 ## Install
 
 ```bash
+npx ai-standup                    # generate today's standup
+npx ai-standup --format slack     # formatted for Slack
+npx ai-standup share              # copy to clipboard
+```
+
+Or install globally:
+
+```bash
 npm install -g ai-standup
-```
-
-Or run without installing:
-
-```bash
-npx ai-standup
-```
-
----
-
-## Quick Start
-
-```bash
-# Generate today's standup
-ai-standup
-
-# Specify your name (auto-detected from git config)
-ai-standup --author "Nick Ashkar"
-
-# Multiple repos
-ai-standup --repo ~/projects/backend --repo ~/projects/frontend
-
-# Slack format
-ai-standup --format slack
-
-# Copy to clipboard
-ai-standup share
 ```
 
 ---
@@ -49,23 +44,24 @@ ai-standup share
 
 ```
   Daily Standup
-  Friday, February 28, 2026
+  Tuesday, February 27, 2026
   Nick Ashkar
 
   Yesterday
-    • Feature: add user authentication endpoint
-      add JWT middleware
-      add refresh token rotation
-    • Bug fix: resolve session expiry edge case
-    • 14 files touched
+    • feat: Added user authentication flow (3 files)
+    • fix: Resolved race condition in payment webhook
+    • refactor: Extracted validation middleware (2 commits)
 
   Today
-    • Working on: user profile page
-    • Continue work on 3 staged files
-    • TODO: add rate limiting to auth routes
+    • Staged: src/api/billing.js, src/hooks/useSubscription.ts
+    • In progress: TODO — implement retry logic for failed charges
+    • Branch: feature/billing-v2 (3 days active)
 
   Blockers
-    ~ Stale branch "feature/old-payments" — no commits in 12 days
+    ⚠ Branch stale-experiment has been inactive for 14 days
+    ⚠ Merge conflict detected in src/config.ts
+
+  Repos: my-saas-app
 ```
 
 ---
@@ -73,58 +69,59 @@ ai-standup share
 ## Slack Format
 
 ```
-*Daily Standup*
-_Nick Ashkar • Friday, February 28, 2026_
+🔄 *Daily Standup* — Tuesday, Feb 27
 
-*Yesterday* :calendar:
-• Feature: add user authentication endpoint
-• Bug fix: resolve session expiry edge case
+*Yesterday*
+• feat: Added user authentication flow
+• fix: Resolved race condition in payment webhook
+• refactor: Extracted validation middleware
 
-*Today* :rocket:
-• Working on: user profile page
-• Continue work on 3 staged files
+*Today*
+• Working on billing-v2 branch
+• TODO: implement retry logic for failed charges
 
-*Blockers* :warning:
-• :large_yellow_circle: Stale branch "feature/old-payments"
+*Blockers*
+⚠️ Merge conflict in src/config.ts
 ```
 
 ---
 
 ## All Commands
 
-| Command | Description |
+| Command | What it does |
 |---------|-------------|
 | `ai-standup` | Generate today's standup |
-| `ai-standup log [n]` | Show last N standups (default 7) |
-| `ai-standup config` | View/set config |
-| `ai-standup share` | Copy latest standup to clipboard |
+| `ai-standup log 7` | Show standups for last 7 days |
+| `ai-standup config` | Set author, default repos, format |
+| `ai-standup share` | Copy to clipboard (paste into Slack) |
 
-### Options
+**Key flags:** `--format text|slack|markdown|json`, `--days 3` (lookback), `--repo path` (repeat for multi-repo), `--author name`
 
-| Flag | Description | Default |
-|------|-------------|---------|
-| `--format` | `text`, `json`, `markdown`, `slack` | `text` |
-| `--days <n>` | Lookback period in days | `1` |
-| `--author <name>` | Filter commits by author | git config |
-| `--repo <path>` | Repo path (repeatable for multi-repo) | cwd |
-| `--no-color` | Disable color output | — |
+---
 
-### Config
+## What It Reads
+
+| Source | What it finds |
+|--------|--------------|
+| **Git log** | Your commits grouped by type (feat, fix, refactor, chore) |
+| **Staged files** | What you're currently working on |
+| **TODO/FIXME** | In-progress items from your code comments |
+| **Branches** | Active branches, stale branches, conflicts |
+
+---
+
+## Multi-Repo Support
 
 ```bash
-# Set defaults so you never need to pass flags
-ai-standup config --author "Nick Ashkar"
-ai-standup config --format slack
-ai-standup config --repo ~/projects/backend --repo ~/projects/frontend
-
-# View current config
-ai-standup config
-
-# Reset
-ai-standup config --reset
+npx ai-standup --repo ./frontend --repo ./backend --repo ./infra
+# Combines activity from all three repos into one standup
 ```
 
-Config is stored at `~/.ai-standup.json`.
+---
+
+## Why Not Just Read the Git Log?
+
+Because `git log --oneline -20` gives you hashes and prefixes. ai-standup gives you a standup. It groups by type, detects blockers, reads your TODOs, checks for conflicts, and formats it for wherever you paste it. In 200ms.
 
 ---
 
@@ -141,6 +138,4 @@ Config is stored at `~/.ai-standup.json`.
 
 ---
 
-## License
-
-MIT © 2026 [NickCirv](https://github.com/NickCirv)
+Built by [@NickCirv](https://github.com/NickCirv) · MIT License
